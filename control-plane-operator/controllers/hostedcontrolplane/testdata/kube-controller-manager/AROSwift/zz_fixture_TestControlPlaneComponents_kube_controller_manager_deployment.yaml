@@ -213,6 +213,7 @@ spec:
         - --feature-gates=VSphereMultiNetworks=false
         - --feature-gates=VolumeAttributesClass=false
         - --feature-gates=VolumeGroupSnapshot=false
+        - --v=2
         command:
         - hyperkube
         - kube-controller-manager

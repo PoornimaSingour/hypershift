@@ -2635,6 +2635,11 @@ type OperatorConfiguration struct {
 	// kubeAPIServer configures the log verbosity of the kube-apiserver component.
 	// +optional
 	KubeAPIServer ComponentLogLevelSpec `json:"kubeAPIServer,omitzero"`
+
+	// kubeControllerManager configures the log verbosity of the
+	// kube-controller-manager component.
+	// +optional
+	KubeControllerManager ComponentLogLevelSpec `json:"kubeControllerManager,omitzero"`
 }
 
 // +genclient

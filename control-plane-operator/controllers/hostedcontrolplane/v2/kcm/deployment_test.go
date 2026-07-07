@@ -25,6 +25,10 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client/fake"
 )
 
+func logLevelPtr(l hyperv1.LogLevel) *hyperv1.LogLevel {
+	return &l
+}
+
 func TestAdaptDeployment(t *testing.T) {
 	t.Parallel()
 
@@ -438,6 +442,156 @@ func TestAdaptDeployment(t *testing.T) {
 				container := podspec.FindContainer(ComponentName, deployment.Spec.Template.Spec.Containers)
 				g.Expect(container).ToNot(BeNil())
 				g.Expect(podspec.FindVolumeMount("service-serving-ca", container.VolumeMounts)).To(BeNil())
+			},
+		},
+		{
+			name: "When no log level is configured it should default to verbosity 2",
+			hcp: &hyperv1.HostedControlPlane{
+				ObjectMeta: metav1.ObjectMeta{
+					Name:      "test-hcp",
+					Namespace: "test-namespace",
+				},
+				Spec: hyperv1.HostedControlPlaneSpec{
+					Networking: hyperv1.ClusterNetworking{
+						ClusterNetwork: []hyperv1.ClusterNetworkEntry{
+							{CIDR: *ipnet.MustParseCIDR("10.132.0.0/14")},
+						},
+						ServiceNetwork: []hyperv1.ServiceNetworkEntry{
+							{CIDR: *ipnet.MustParseCIDR("172.31.0.0/16")},
+						},
+					},
+				},
+			},
+			validate: func(t *testing.T, deployment *appsv1.Deployment, err error) {
+				g := NewWithT(t)
+				g.Expect(err).ToNot(HaveOccurred())
+				container := podspec.FindContainer(ComponentName, deployment.Spec.Template.Spec.Containers)
+				g.Expect(container).ToNot(BeNil())
+				g.Expect(container.Args).To(ContainElement("--v=2"))
+			},
+		},
+		{
+			name: "When KCM logLevel is Normal it should set verbosity to 2",
+			hcp: &hyperv1.HostedControlPlane{
+				ObjectMeta: metav1.ObjectMeta{
+					Name:      "test-hcp",
+					Namespace: "test-namespace",
+				},
+				Spec: hyperv1.HostedControlPlaneSpec{
+					OperatorConfiguration: &hyperv1.OperatorConfiguration{
+						KubeControllerManager: hyperv1.ComponentLogLevelSpec{
+							LogLevel: logLevelPtr(hyperv1.Normal),
+						},
+					},
+					Networking: hyperv1.ClusterNetworking{
+						ClusterNetwork: []hyperv1.ClusterNetworkEntry{
+							{CIDR: *ipnet.MustParseCIDR("10.132.0.0/14")},
+						},
+						ServiceNetwork: []hyperv1.ServiceNetworkEntry{
+							{CIDR: *ipnet.MustParseCIDR("172.31.0.0/16")},
+						},
+					},
+				},
+			},
+			validate: func(t *testing.T, deployment *appsv1.Deployment, err error) {
+				g := NewWithT(t)
+				g.Expect(err).ToNot(HaveOccurred())
+				container := podspec.FindContainer(ComponentName, deployment.Spec.Template.Spec.Containers)
+				g.Expect(container).ToNot(BeNil())
+				g.Expect(container.Args).To(ContainElement("--v=2"))
+			},
+		},
+		{
+			name: "When KCM logLevel is Debug it should set verbosity to 4",
+			hcp: &hyperv1.HostedControlPlane{
+				ObjectMeta: metav1.ObjectMeta{
+					Name:      "test-hcp",
+					Namespace: "test-namespace",
+				},
+				Spec: hyperv1.HostedControlPlaneSpec{
+					OperatorConfiguration: &hyperv1.OperatorConfiguration{
+						KubeControllerManager: hyperv1.ComponentLogLevelSpec{
+							LogLevel: logLevelPtr(hyperv1.Debug),
+						},
+					},
+					Networking: hyperv1.ClusterNetworking{
+						ClusterNetwork: []hyperv1.ClusterNetworkEntry{
+							{CIDR: *ipnet.MustParseCIDR("10.132.0.0/14")},
+						},
+						ServiceNetwork: []hyperv1.ServiceNetworkEntry{
+							{CIDR: *ipnet.MustParseCIDR("172.31.0.0/16")},
+						},
+					},
+				},
+			},
+			validate: func(t *testing.T, deployment *appsv1.Deployment, err error) {
+				g := NewWithT(t)
+				g.Expect(err).ToNot(HaveOccurred())
+				container := podspec.FindContainer(ComponentName, deployment.Spec.Template.Spec.Containers)
+				g.Expect(container).ToNot(BeNil())
+				g.Expect(container.Args).To(ContainElement("--v=4"))
+			},
+		},
+		{
+			name: "When KCM logLevel is Trace it should set verbosity to 6",
+			hcp: &hyperv1.HostedControlPlane{
+				ObjectMeta: metav1.ObjectMeta{
+					Name:      "test-hcp",
+					Namespace: "test-namespace",
+				},
+				Spec: hyperv1.HostedControlPlaneSpec{
+					OperatorConfiguration: &hyperv1.OperatorConfiguration{
+						KubeControllerManager: hyperv1.ComponentLogLevelSpec{
+							LogLevel: logLevelPtr(hyperv1.Trace),
+						},
+					},
+					Networking: hyperv1.ClusterNetworking{
+						ClusterNetwork: []hyperv1.ClusterNetworkEntry{
+							{CIDR: *ipnet.MustParseCIDR("10.132.0.0/14")},
+						},
+						ServiceNetwork: []hyperv1.ServiceNetworkEntry{
+							{CIDR: *ipnet.MustParseCIDR("172.31.0.0/16")},
+						},
+					},
+				},
+			},
+			validate: func(t *testing.T, deployment *appsv1.Deployment, err error) {
+				g := NewWithT(t)
+				g.Expect(err).ToNot(HaveOccurred())
+				container := podspec.FindContainer(ComponentName, deployment.Spec.Template.Spec.Containers)
+				g.Expect(container).ToNot(BeNil())
+				g.Expect(container.Args).To(ContainElement("--v=6"))
+			},
+		},
+		{
+			name: "When KCM logLevel is TraceAll it should set verbosity to 8",
+			hcp: &hyperv1.HostedControlPlane{
+				ObjectMeta: metav1.ObjectMeta{
+					Name:      "test-hcp",
+					Namespace: "test-namespace",
+				},
+				Spec: hyperv1.HostedControlPlaneSpec{
+					OperatorConfiguration: &hyperv1.OperatorConfiguration{
+						KubeControllerManager: hyperv1.ComponentLogLevelSpec{
+							LogLevel: logLevelPtr(hyperv1.TraceAll),
+						},
+					},
+					Networking: hyperv1.ClusterNetworking{
+						ClusterNetwork: []hyperv1.ClusterNetworkEntry{
+							{CIDR: *ipnet.MustParseCIDR("10.132.0.0/14")},
+						},
+						ServiceNetwork: []hyperv1.ServiceNetworkEntry{
+							{CIDR: *ipnet.MustParseCIDR("172.31.0.0/16")},
+						},
+					},
+				},
+			},
+			validate: func(t *testing.T, deployment *appsv1.Deployment, err error) {
+				g := NewWithT(t)
+				g.Expect(err).ToNot(HaveOccurred())
+				container := podspec.FindContainer(ComponentName, deployment.Spec.Template.Spec.Containers)
+				g.Expect(container).ToNot(BeNil())
+				g.Expect(container.Args).To(ContainElement("--v=8"))
 			},
 		},
 	}

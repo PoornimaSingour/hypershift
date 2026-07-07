@@ -71,6 +71,13 @@ func adaptDeployment(cpContext component.WorkloadContext, deployment *appsv1.Dep
 
 		proxy.SetEnvVars(&c.Env)
 
+		verbosity := 2
+		if hcp.Spec.OperatorConfiguration != nil &&
+			hcp.Spec.OperatorConfiguration.KubeControllerManager.LogLevel != nil {
+			verbosity = util.LogLevelToKlogVerbosity(hcp.Spec.OperatorConfiguration.KubeControllerManager.LogLevel)
+		}
+		c.Args = append(c.Args, fmt.Sprintf("--v=%d", verbosity))
+
 		if serviceServingCA != nil {
 			deployment.Spec.Template.Spec.Volumes = append(deployment.Spec.Template.Spec.Volumes, corev1.Volume{
 				Name: "service-serving-ca",
