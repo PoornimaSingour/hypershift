@@ -514,25 +514,28 @@ func TestResolveKCMVerbosity(t *testing.T) {
 	}
 
 	tests := []struct {
-		name     string
-		hcp      *hyperv1.HostedControlPlane
-		expected int
+		name       string
+		hcp        *hyperv1.HostedControlPlane
+		expectedV  int
+		expectedOK bool
 	}{
 		{
-			name: "When no operatorConfiguration is set it should default to verbosity 2",
+			name: "When no operatorConfiguration is set it should not override verbosity",
 			hcp: &hyperv1.HostedControlPlane{
 				Spec: hyperv1.HostedControlPlaneSpec{},
 			},
-			expected: 2,
+			expectedV:  0,
+			expectedOK: false,
 		},
 		{
-			name: "When operatorConfiguration exists but kubeControllerManager is nil it should default to verbosity 2",
+			name: "When operatorConfiguration exists but kubeControllerManager is nil it should not override verbosity",
 			hcp: &hyperv1.HostedControlPlane{
 				Spec: hyperv1.HostedControlPlaneSpec{
 					OperatorConfiguration: &hyperv1.OperatorConfiguration{},
 				},
 			},
-			expected: 2,
+			expectedV:  0,
+			expectedOK: false,
 		},
 		{
 			name: "When kubeControllerManager logLevel is Normal it should return verbosity 2",
@@ -543,7 +546,8 @@ func TestResolveKCMVerbosity(t *testing.T) {
 					},
 				},
 			},
-			expected: 2,
+			expectedV:  2,
+			expectedOK: true,
 		},
 		{
 			name: "When kubeControllerManager logLevel is Debug it should return verbosity 4",
@@ -554,7 +558,8 @@ func TestResolveKCMVerbosity(t *testing.T) {
 					},
 				},
 			},
-			expected: 4,
+			expectedV:  4,
+			expectedOK: true,
 		},
 		{
 			name: "When kubeControllerManager logLevel is Trace it should return verbosity 6",
@@ -565,7 +570,8 @@ func TestResolveKCMVerbosity(t *testing.T) {
 					},
 				},
 			},
-			expected: 6,
+			expectedV:  6,
+			expectedOK: true,
 		},
 		{
 			name: "When kubeControllerManager logLevel is TraceAll it should return verbosity 8",
@@ -576,14 +582,17 @@ func TestResolveKCMVerbosity(t *testing.T) {
 					},
 				},
 			},
-			expected: 8,
+			expectedV:  8,
+			expectedOK: true,
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			g := NewWithT(t)
-			g.Expect(resolveKCMVerbosity(tt.hcp)).To(Equal(tt.expected))
+			v, ok := resolveKCMVerbosity(tt.hcp)
+			g.Expect(ok).To(Equal(tt.expectedOK))
+			g.Expect(v).To(Equal(tt.expectedV))
 		})
 	}
 }
