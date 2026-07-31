@@ -53574,6 +53574,8 @@ KubeAPIServerOperatorSpec
 <em>(Optional)</em>
 <p>kubeAPIServer configures the kube-apiserver component.
 Setting the logLevel field triggers a rolling restart of the component.
+When omitted, this means the user has no opinion and the platform
+chooses a reasonable default, which is subject to change over time.
 kube-apiserver runs with 3 replicas (HA) — 2 continue serving while 1 restarts.</p>
 </td>
 </tr>
@@ -53588,8 +53590,10 @@ EtcdOperatorSpec
 </td>
 <td>
 <em>(Optional)</em>
-<p>etcd configures the Etcd component.
+<p>etcd configures the etcd component.
 Setting the logLevel field triggers a rolling restart of the component.
+When omitted, this means the user has no opinion and the platform
+chooses a reasonable default, which is subject to change over time.
 Etcd runs with 3 replicas — Raft quorum is maintained during rolling update.</p>
 </td>
 </tr>
@@ -53606,6 +53610,8 @@ KubeControllerManagerOperatorSpec
 <em>(Optional)</em>
 <p>kubeControllerManager configures the kube-controller-manager component.
 Setting the logLevel field triggers a rolling restart of the component.
+When omitted, this means the user has no opinion and the platform
+chooses a reasonable default, which is subject to change over time.
 kube-controller-manager uses leader election — the standby takes over during restart.</p>
 </td>
 </tr>
@@ -53622,6 +53628,8 @@ KubeSchedulerOperatorSpec
 <em>(Optional)</em>
 <p>kubeScheduler configures the kube-scheduler component.
 Setting the logLevel field triggers a rolling restart of the component.
+When omitted, this means the user has no opinion and the platform
+chooses a reasonable default, which is subject to change over time.
 kube-scheduler uses leader election — the standby takes over during restart.</p>
 </td>
 </tr>
@@ -53638,6 +53646,8 @@ OpenShiftControllerManagerOperatorSpec
 <em>(Optional)</em>
 <p>openShiftControllerManager configures the openshift-controller-manager component.
 Setting the logLevel field triggers a rolling restart of the component.
+When omitted, this means the user has no opinion and the platform
+chooses a reasonable default, which is subject to change over time.
 openshift-controller-manager uses leader election — the standby takes over during restart.</p>
 </td>
 </tr>
@@ -53654,6 +53664,8 @@ OpenShiftAPIServerOperatorSpec
 <em>(Optional)</em>
 <p>openShiftAPIServer configures the openshift-apiserver component.
 Setting the logLevel field triggers a rolling restart of the component.
+When omitted, this means the user has no opinion and the platform
+chooses a reasonable default, which is subject to change over time.
 openshift-apiserver runs with 3 replicas (HA) — 2 continue serving while 1 restarts.</p>
 </td>
 </tr>
@@ -53670,6 +53682,8 @@ OpenShiftOAuthAPIServerOperatorSpec
 <em>(Optional)</em>
 <p>openShiftOAuthAPIServer configures the openshift-oauth-apiserver component.
 Setting the logLevel field triggers a rolling restart of the component.
+When omitted, this means the user has no opinion and the platform
+chooses a reasonable default, which is subject to change over time.
 openshift-oauth-apiserver runs with 3 replicas (HA) — 2 continue serving while 1 restarts.</p>
 </td>
 </tr>
@@ -53686,6 +53700,8 @@ OAuthServerOperatorSpec
 <em>(Optional)</em>
 <p>oauthServer configures the oauth-server component.
 Setting the logLevel field triggers a rolling restart of the component.
+When omitted, this means the user has no opinion and the platform
+chooses a reasonable default, which is subject to change over time.
 oauth-server runs with 3 replicas (HA) — 2 continue serving while 1 restarts.</p>
 </td>
 </tr>
